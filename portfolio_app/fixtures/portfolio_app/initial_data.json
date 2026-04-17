@@ -1,0 +1,374 @@
+[
+{
+  "model": "portfolio_app.skill",
+  "pk": 1,
+  "fields": {
+    "name": "C#",
+    "description": "C#"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 2,
+  "fields": {
+    "name": "Java",
+    "description": "Java"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 3,
+  "fields": {
+    "name": "Python",
+    "description": "Python"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 4,
+  "fields": {
+    "name": "C++",
+    "description": "C++"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 5,
+  "fields": {
+    "name": "JavaScript",
+    "description": "JavaScript"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 6,
+  "fields": {
+    "name": "PHP",
+    "description": "PHP"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 7,
+  "fields": {
+    "name": "C# .NET",
+    "description": "C# .NET"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 8,
+  "fields": {
+    "name": "Spring Boot",
+    "description": "Spring Boot"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 9,
+  "fields": {
+    "name": "Django",
+    "description": "Django"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 10,
+  "fields": {
+    "name": "Flask",
+    "description": "Flask"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 11,
+  "fields": {
+    "name": "React.js",
+    "description": "React.js"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 12,
+  "fields": {
+    "name": "Symfony",
+    "description": "Symfony"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 14,
+  "fields": {
+    "name": "MongoDB",
+    "description": "MongoDB"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 15,
+  "fields": {
+    "name": "PostgreSQL",
+    "description": "PostgreSQL"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 16,
+  "fields": {
+    "name": "Unity",
+    "description": "Unity"
+  }
+},
+{
+  "model": "portfolio_app.skill",
+  "pk": 17,
+  "fields": {
+    "name": "Git",
+    "description": "Git"
+  }
+},
+{
+  "model": "portfolio_app.workexperience",
+  "pk": 1,
+  "fields": {
+    "title": "Full-Stack Developer",
+    "company": "PeopleWeek S.A. · Skopje, Macedonia",
+    "description": "Developing a full-stack HR management application using React.js, Symfony, and MongoDB. Building dynamic interfaces and scalable back-end services for enterprise HR workflows.",
+    "is_current_working_place": true,
+    "start_date": "2025-09-01",
+    "end_date": null
+  }
+},
+{
+  "model": "portfolio_app.workexperience",
+  "pk": 2,
+  "fields": {
+    "title": "Software Engineering Intern",
+    "company": "G+D Netcetera · Skopje, Macedonia",
+    "description": "Contributed to an internal enterprise application built with Java Spring Boot and React. Responsible for debugging, feature additions, and working closely with a senior mentor.",
+    "is_current_working_place": false,
+    "start_date": "2025-04-04",
+    "end_date": "2025-07-04"
+  }
+},
+{
+  "model": "portfolio_app.workexperience",
+  "pk": 3,
+  "fields": {
+    "title": "Cook & Store Clerk",
+    "company": "Sunriver Resort · Oregon, USA",
+    "description": "International work experience on the Oregon West Coast. Managed fast-paced kitchen and front-of-house responsibilities in a high-volume resort environment.",
+    "is_current_working_place": false,
+    "start_date": "2024-06-01",
+    "end_date": "2024-09-30"
+  }
+},
+{
+  "model": "portfolio_app.workexperience",
+  "pk": 4,
+  "fields": {
+    "title": "Line Worker",
+    "company": "INFINEX GROUP · Germany",
+    "description": "Industrial production of plastic components for automotive transport containers.",
+    "is_current_working_place": false,
+    "start_date": "2023-07-01",
+    "end_date": "2023-09-30"
+  }
+},
+{
+  "model": "portfolio_app.workexperience",
+  "pk": 5,
+  "fields": {
+    "title": "Logistics Operator",
+    "company": "LGI Logistic Group · Germany",
+    "description": "Collection, packaging, and transfer of products for international logistics chains.",
+    "is_current_working_place": false,
+    "start_date": "2022-07-01",
+    "end_date": "2022-09-30"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 1,
+  "fields": {
+    "name": "Python"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 2,
+  "fields": {
+    "name": "Flask"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 3,
+  "fields": {
+    "name": "Jinja Engine"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 4,
+  "fields": {
+    "name": "Maps API"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 5,
+  "fields": {
+    "name": "Stripe"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 6,
+  "fields": {
+    "name": "Multi-Role"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 7,
+  "fields": {
+    "name": "E-Commerce"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 8,
+  "fields": {
+    "name": "C#"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 9,
+  "fields": {
+    "name": "Unity"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 10,
+  "fields": {
+    "name": "Game Dev"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 11,
+  "fields": {
+    "name": "HTML"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 12,
+  "fields": {
+    "name": "CSS"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 13,
+  "fields": {
+    "name": "JavaScript"
+  }
+},
+{
+  "model": "portfolio_app.technologiesforproject",
+  "pk": 14,
+  "fields": {
+    "name": "Open Source"
+  }
+},
+{
+  "model": "portfolio_app.project",
+  "pk": 1,
+  "fields": {
+    "emoji": "⚙️",
+    "title": "CodeNexus",
+    "description": "A Coderunner-style platform for automated testing and evaluation of programming exercises. Built as Bachelor's Degree thesis, inspired by FINKI's grading system.",
+    "link_to_github_repository": "https://github.com/Polclard/CodeNexus",
+    "link_to_live_demo": "https://codenexus.pythonanywhere.com",
+    "technologies_for_project": [
+      1,
+      2,
+      3
+    ]
+  }
+},
+{
+  "model": "portfolio_app.project",
+  "pk": 2,
+  "fields": {
+    "emoji": "🍷",
+    "title": "DafinoVino",
+    "description": "Interactive map app showcasing all wineries in Macedonia. Supports geolocation to find nearby wineries and provides routing directions via an embedded map.",
+    "link_to_github_repository": "https://github.com/Polclard/VinariiVoMakedonija",
+    "link_to_live_demo": "https://polclard.pythonanywhere.com/",
+    "technologies_for_project": [
+      1,
+      2,
+      4
+    ]
+  }
+},
+{
+  "model": "portfolio_app.education",
+  "pk": 1,
+  "fields": {
+    "title": "BSc in Software Engineering & Information Systems",
+    "school_name": "Faculty of Computer Science and Engineering (FINKI), Skopje",
+    "description": "Faculty of Computer Science and Engineering (FINKI), Skopje",
+    "start_date": "2021-10-01",
+    "end_date": "2026-02-19"
+  }
+},
+{
+  "model": "portfolio_app.education",
+  "pk": 2,
+  "fields": {
+    "title": "Electro Technician — Computer Technology & Automation",
+    "school_name": "Gosho Vikentiev, Kochani",
+    "description": "Electro Technician — Computer Technology & Automation",
+    "start_date": "2017-09-01",
+    "end_date": "2021-06-10"
+  }
+},
+{
+  "model": "portfolio_app.languages",
+  "pk": 1,
+  "fields": {
+    "emoji": "🇲🇰",
+    "language_name": "Macedonian"
+  }
+},
+{
+  "model": "portfolio_app.languages",
+  "pk": 2,
+  "fields": {
+    "emoji": "🇬🇧",
+    "language_name": "English"
+  }
+},
+{
+  "model": "portfolio_app.languages",
+  "pk": 3,
+  "fields": {
+    "emoji": "🇩🇪",
+    "language_name": "German"
+  }
+},
+{
+  "model": "portfolio_app.languages",
+  "pk": 4,
+  "fields": {
+    "emoji": "🇷🇸",
+    "language_name": "Serbian"
+  }
+}
+]
