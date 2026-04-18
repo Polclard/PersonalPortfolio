@@ -17,7 +17,7 @@ def portfolio(request):
         "languages": Languages.objects.all(),
     })
 
-WEBHOOK_SECRET = os.environ.get("GITHUB_WEBHOOK_SECRET", "")
+WEBHOOK_SECRET = os.getenv("GITHUB_WEBHOOK_SECRET", "")
 
 @csrf_exempt
 def git_update(request):
