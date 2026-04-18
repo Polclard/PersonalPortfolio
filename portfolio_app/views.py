@@ -6,6 +6,7 @@ from django.views.decorators.csrf import csrf_exempt
 import hashlib
 import os
 import hmac
+import subprocess
 
 def portfolio(request):
     return render(request, "index.html", {
@@ -46,6 +47,11 @@ def git_update(request):
         repo = git.Repo("/home/alenjangelov/PersonalPortfolio")
         repo.git.checkout("main")
         repo.git.pull("origin", "main")
+
+        subprocess.run(
+            ["/usr/bin/touch", "/var/www/alenjangelov_pythonanywhere_com_wsgi.py"],
+            check=True
+        )
 
         return HttpResponse("Updated successfully", status=200)
 
