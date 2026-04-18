@@ -1,6 +1,7 @@
 from django.shortcuts import render
+from django.http import HttpResponse, HttpResponseForbidden
 from .models import Skill, Technologies, WorkExperience, Project, Education, Languages
-import git 
+import git
 
 def portfolio(request):
     return render(request, "index.html", {
@@ -13,8 +14,13 @@ def portfolio(request):
     })
 
 def git_update(request):
-    repo = git.Repo('./PersonalPortfolio')
+    if request.method != "POST":
+        return HttpResponseForbidden("Only POST allowed")
+
+    repo = git.Repo("/home/alenjangelov/PersonalPortfolio")
     origin = repo.remotes.origin
-    repo.create_head('main', origin.refs.main).set_tracking_branch(origin.refs.main).checkout()
-    origin.pull()
-    return '', 200
+    origin.fetch()
+    repo.git.checkout("main")
+    origin.pull("main")
+
+    return HttpResponse("Updated successfully", status=200)
