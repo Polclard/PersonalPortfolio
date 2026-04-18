@@ -2,6 +2,10 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseForbidden
 from .models import Skill, Technologies, WorkExperience, Project, Education, Languages
 import git
+from django.views.decorators.csrf import csrf_exempt
+import hashlib
+import os
+import hmac
 
 def portfolio(request):
     return render(request, "index.html", {
@@ -13,14 +17,33 @@ def portfolio(request):
         "languages": Languages.objects.all(),
     })
 
+WEBHOOK_SECRET = os.environ.get("GITHUB_WEBHOOK_SECRET", "")
+
+@csrf_exempt
 def git_update(request):
     if request.method != "POST":
         return HttpResponseForbidden("Only POST allowed")
 
+    signature = request.headers.get("X-Hub-Signature-256")
+    if not signature:
+        return HttpResponseForbidden("Missing signature")
+
+    digest = hmac.new(
+        WEBHOOK_SECRET.encode("utf-8"),
+        msg=request.body,
+        digestmod=hashlib.sha256
+    ).hexdigest()
+
+    expected_signature = f"sha256={digest}"
+
+    if not hmac.compare_digest(signature, expected_signature):
+        return HttpResponseForbidden("Invalid signature")
+
     repo = git.Repo("/home/alenjangelov/PersonalPortfolio")
     origin = repo.remotes.origin
+
     origin.fetch()
     repo.git.checkout("main")
-    origin.pull("main")
+    repo.git.reset("--hard", "origin/main")
 
     return HttpResponse("Updated successfully", status=200)
