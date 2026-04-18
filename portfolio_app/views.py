@@ -24,9 +24,23 @@ def git_update(request):
     if request.method != "POST":
         return HttpResponseForbidden("Only POST allowed")
 
-    provided_secret = request.GET.get("secret")
-    if provided_secret != WEBHOOK_SECRET:
-        return HttpResponseForbidden("Invalid secret")
+    if not WEBHOOK_SECRET:
+        return HttpResponse("GITHUB_WEBHOOK_SECRET is not set", status=500)
+
+    signature = request.headers.get("X-Hub-Signature-256")
+    if not signature:
+        return HttpResponseForbidden("Missing signature")
+
+    digest = hmac.new(
+        WEBHOOK_SECRET.encode("utf-8"),
+        msg=request.body,
+        digestmod=hashlib.sha256
+    ).hexdigest()
+
+    expected_signature = f"sha256={digest}"
+
+    if not hmac.compare_digest(signature, expected_signature):
+        return HttpResponseForbidden("Invalid signature")
 
     try:
         repo = git.Repo("/home/alenjangelov/PersonalPortfolio")
