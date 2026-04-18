@@ -24,20 +24,26 @@ def git_update(request):
     if request.method != "POST":
         return HttpResponseForbidden("Only POST allowed")
 
-    # check secret from URL
-    provided_secret = request.GET.get("secret")
-    if provided_secret != WEBHOOK_SECRET:
-        return HttpResponseForbidden("Invalid secret")
+    signature = request.headers.get("X-Hub-Signature-256")
+    if not signature:
+        return HttpResponseForbidden("Missing signature")
 
-    try:
-        repo = git.Repo("/home/alenjangelov/PersonalPortfolio")
-        origin = repo.remotes.origin
+    digest = hmac.new(
+        WEBHOOK_SECRET.encode("utf-8"),
+        msg=request.body,
+        digestmod=hashlib.sha256
+    ).hexdigest()
 
-        origin.fetch()
-        repo.git.checkout("main")
-        repo.git.reset("--hard", "origin/main")
+    expected_signature = f"sha256={digest}"
 
-        return HttpResponse("Updated successfully", status=200)
+    if not hmac.compare_digest(signature, expected_signature):
+        return HttpResponseForbidden("Invalid signature")
 
-    except Exception as e:
-        return HttpResponse(f"Error: {str(e)}", status=500)
+    repo = git.Repo("/home/alenjangelov/PersonalPortfolio")
+    origin = repo.remotes.origin
+
+    origin.fetch()
+    repo.git.checkout("main")
+    repo.git.reset("--hard", "origin/main")
+
+    return HttpResponse("Updated successfully", status=200)
