@@ -44,11 +44,8 @@ def git_update(request):
 
     try:
         repo = git.Repo("/home/alenjangelov/PersonalPortfolio")
-        origin = repo.remotes.origin
-
-        origin.fetch()
         repo.git.checkout("main")
-        repo.git.reset("--hard", "origin/main")
+        repo.git.pull("origin", "main")
 
         return HttpResponse("Updated successfully", status=200)
 
