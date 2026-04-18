@@ -24,5 +24,5 @@ import portfolio_app.views
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', portfolio_app.views.portfolio, name="index"),
-    path('/git_update', portfolio_app.views.git_update, name="git_update"),
+    path('git_update', portfolio_app.views.git_update, name="git_update"),
 ]
