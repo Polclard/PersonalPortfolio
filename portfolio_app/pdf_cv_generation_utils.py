@@ -139,7 +139,7 @@ def generate_cv():
             start_date = job.start_date.strftime("%b %Y")
             story.append(
                 Paragraph(
-                    f"<b>{job.title}</b> — {job.company}",
+                    f"<b>{job.title}</b> — {job.company} {'- <b>Current</b>' if job.is_current_working_place and job.is_current_working_place else ''}",
                     styles["BodySmall"]
                 )
             )
