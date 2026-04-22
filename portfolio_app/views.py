@@ -51,6 +51,18 @@ def git_update(request):
         repo.git.checkout("main")
         repo.git.pull("origin", "main")
 
+        subprocess.run(  
+            ["/home/alenjangelov/.virtualenvs/PersonalPortfolio-env/bin/pip", "install", "-r", "requirements.txt"],  
+            cwd="/home/alenjangelov/PersonalPortfolio",  
+            check=True  
+        )  
+        
+        subprocess.run(  
+            ["/home/alenjangelov/.virtualenvs/PersonalPortfolio-env/bin/python", "manage.py", "migrate"],  
+            cwd="/home/alenjangelov/PersonalPortfolio",  
+            check=True  
+        )  
+
         subprocess.run(
             ["/usr/bin/touch", "/var/www/alenjangelov_pythonanywhere_com_wsgi.py"],
             check=True
