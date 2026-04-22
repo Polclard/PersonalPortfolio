@@ -7,8 +7,10 @@ import hashlib
 import os
 import hmac
 import subprocess
+from datetime import datetime
 
 def portfolio(request):
+    current_year = datetime.now().year
     return render(request, "index.html", {
         "skills": Skill.objects.all(),
         "technologies": Technologies.objects.all(),
@@ -16,6 +18,7 @@ def portfolio(request):
         "projects": Project.objects.all(),
         "education": Education.objects.all().order_by('-start_date'),
         "languages": Languages.objects.all(),
+        "current_year": current_year,
     })
 
 WEBHOOK_SECRET = os.getenv("GITHUB_WEBHOOK_SECRET", "")
