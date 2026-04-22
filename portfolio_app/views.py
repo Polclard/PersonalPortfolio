@@ -8,6 +8,7 @@ import os
 import hmac
 import subprocess
 from datetime import datetime
+from .pdf_cv_generation_utils import generate_cv
 
 def portfolio(request):
     current_year = datetime.now().year
@@ -72,3 +73,9 @@ def git_update(request):
 
     except Exception as e:
         return HttpResponse(f"Error: {str(e)}", status=500)
+
+def download_cv_pdf(request):
+    pdf = generate_cv()
+    response = HttpResponse(pdf, content_type="application/pdf")
+    response["Content-Disposition"] = 'attachment; filename="Alen_Jangelov_CV.pdf"'
+    return response

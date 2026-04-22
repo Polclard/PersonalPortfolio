@@ -18,11 +18,11 @@ from django.contrib import admin
 from django.urls import path
 from django.conf import settings
 from django.conf.urls.static import static
-
-import portfolio_app.views
+from portfolio_app.views import *
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', portfolio_app.views.portfolio, name="index"),
-    path('git_update', portfolio_app.views.git_update, name="git_update"),
+    path('', portfolio, name="index"),
+    path('git_update', git_update, name="git_update"),
+    path("download-cv/", download_cv_pdf, name="download_cv"),
 ]
