@@ -1,0 +1,49 @@
+<div class="github-card reveal">
+  <div class="github-card-top">
+    <div>
+      <div class="github-kicker">@{{ github_username }}</div>
+      <p class="github-copy">
+        A rolling snapshot of public activity from the last year.
+      </p>
+    </div>
+    <div class="github-total" aria-label="{{ github_total }} total GitHub contributions">
+      <span>{{ github_total }}</span>
+      <small>contributions</small>
+    </div>
+  </div>
+
+  {% if github_contributions_available %}
+  <div class="github-calendar-wrap">
+    <div class="github-calendar" aria-label="GitHub contribution calendar">
+      {% for week in github_contribution_weeks %}
+      <div class="github-week">
+        {% for day in week.contributionDays %}
+        <span
+          class="github-day level-{{ day.intensity }}"
+          title="{{ day.date }}: {{ day.contributionCount }} contributions"
+          aria-label="{{ day.date }}: {{ day.contributionCount }} contributions"
+        ></span>
+        {% endfor %}
+      </div>
+      {% endfor %}
+    </div>
+  </div>
+  <div class="github-legend" aria-hidden="true">
+    <span>Less</span>
+    <i class="github-day level-0"></i>
+    <i class="github-day level-1"></i>
+    <i class="github-day level-2"></i>
+    <i class="github-day level-3"></i>
+    <i class="github-day level-4"></i>
+    <span>More</span>
+  </div>
+  {% else %}
+    <p class="github-empty">
+        GitHub activity is unavailable right now. Check the GitHub token and username
+        environment variables.
+    </p>
+    <p class="github-empty">
+        GitHub activity unavailable: {{ github_error }}
+    </p>
+  {% endif %}
+</div>
