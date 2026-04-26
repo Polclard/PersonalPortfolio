@@ -3,10 +3,13 @@
     <div>
       <div class="github-kicker">@{{ github_username }}</div>
       <p class="github-copy">
-        A rolling snapshot of public activity from the last year.
+        A rolling snapshot of activity from the last year.
       </p>
     </div>
-    <div class="github-total" aria-label="{{ github_total }} total GitHub contributions">
+    <div
+      class="github-total"
+      aria-label="{{ github_total }} total GitHub contributions"
+    >
       <span>{{ github_total }}</span>
       <small>contributions</small>
     </div>
@@ -38,12 +41,10 @@
     <span>More</span>
   </div>
   {% else %}
-    <p class="github-empty">
-        GitHub activity is unavailable right now. Check the GitHub token and username
-        environment variables.
-    </p>
-    <p class="github-empty">
-        GitHub activity unavailable: {{ github_error }}
-    </p>
+  <p class="github-empty">
+    GitHub activity is unavailable right now. Check the GitHub token and
+    username environment variables.
+  </p>
+  <p class="github-empty">GitHub activity unavailable: {{ github_error }}</p>
   {% endif %}
 </div>
