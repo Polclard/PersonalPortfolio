@@ -30,6 +30,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'portfolio_app.middleware.PageVisitMiddleware',
 ]
 
 ROOT_URLCONF = 'portfolio_site.urls'
@@ -75,6 +76,8 @@ else:
 
 STATIC_URL = "/static/"
 STATIC_ROOT = os.path.join(BASE_DIR, 'static')
+
+ANALYTICS_RAW_RETENTION_DAYS = int(os.getenv("ANALYTICS_RAW_RETENTION_DAYS", "30"))
 
 SESSION_COOKIE_SECURE = not DEBUG
 CSRF_COOKIE_SECURE = not DEBUG

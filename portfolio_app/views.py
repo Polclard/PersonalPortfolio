@@ -2,7 +2,7 @@ from django.shortcuts import render
 from django.http import HttpResponse, HttpResponseForbidden
 from .models import Skill, Technologies, WorkExperience, Project, Education, Languages
 import git
-from django.views.decorators.csrf import csrf_exempt
+from django.views.decorators.csrf import csrf_exempt, ensure_csrf_cookie
 import hashlib
 import os
 import hmac
@@ -12,6 +12,10 @@ from .pdf_cv_generation_utils import generate_cv
 import requests
 from django.core.cache import cache
 from decouple import config
+from django.http import JsonResponse
+from django.views.decorators.http import require_POST
+
+from .analytics import parse_click_payload, record_click_event
 
 
 GITHUB_CONTRIBUTIONS_CACHE_KEY = "github_contributions"
@@ -126,6 +130,7 @@ def get_github_contribution_context():
         return context
 
 
+@ensure_csrf_cookie
 def portfolio(request):
     current_year = datetime.now().year
     context = {
@@ -200,3 +205,13 @@ def download_cv_pdf(request):
 
 def github_contributions(request):
     return render(request, "github_contributions.html", get_github_contribution_context())
+
+
+@require_POST
+def track_click(request):
+    try:
+        payload = parse_click_payload(request)
+        record_click_event(request, payload)
+        return JsonResponse({"status": "ok"})
+    except Exception as e:
+        return JsonResponse({"status": "error", "message": str(e)}, status=400)

@@ -1,0 +1,665 @@
+{% extends "admin/base_site.html" %}
+{% load i18n log %}
+
+{% block extrahead %}
+{{ block.super }}
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.3/dist/chart.umd.min.js"></script>
+{% endblock %}
+
+{% block extrastyle %}
+{{ block.super }}
+<style>
+  .analytics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin: 20px 0 28px;
+  }
+  .analytics-card {
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .analytics-card h2,
+  .analytics-panel h2 {
+    margin: 0 0 8px;
+    font-size: 16px;
+  }
+  .analytics-value {
+    font-size: 28px;
+    font-weight: 700;
+    line-height: 1.1;
+  }
+  .analytics-layout {
+    display: grid;
+    gap: 16px;
+  }
+  .analytics-chart-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .analytics-bottom {
+    display: grid;
+    grid-template-columns: minmax(0, 1.4fr) minmax(280px, 1fr);
+    gap: 16px;
+  }
+  .analytics-interactive-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(320px, 1fr));
+    gap: 16px;
+  }
+  .analytics-panel {
+    background: var(--body-bg);
+    border: 1px solid var(--hairline-color);
+    border-radius: 8px;
+    padding: 16px;
+  }
+  .analytics-panel--wide {
+    grid-column: 1 / -1;
+  }
+  .analytics-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+  .analytics-table th,
+  .analytics-table td {
+    padding: 10px 12px;
+    border-bottom: 1px solid var(--hairline-color);
+    text-align: left;
+    vertical-align: top;
+  }
+  .analytics-table th:last-child,
+  .analytics-table td:last-child {
+    text-align: right;
+    white-space: nowrap;
+  }
+  .analytics-list {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .analytics-list li + li {
+    margin-top: 6px;
+  }
+  .analytics-muted {
+    color: var(--body-quiet-color);
+  }
+  .analytics-actions {
+    margin-bottom: 16px;
+  }
+  .analytics-canvas-wrap {
+    position: relative;
+    height: 320px;
+  }
+  .analytics-canvas-wrap--wide {
+    height: 360px;
+  }
+  .analytics-chart {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(18px, 1fr));
+    align-items: end;
+    gap: 10px;
+    min-height: 220px;
+    padding: 16px 12px 8px;
+    border-radius: 8px;
+    background:
+      linear-gradient(to top, color-mix(in srgb, var(--hairline-color) 100%, transparent) 1px, transparent 1px) 0 0 / 100% 25%,
+      linear-gradient(180deg, color-mix(in srgb, var(--selected-bg) 8%, transparent), transparent);
+  }
+  .analytics-bar-wrap {
+    min-width: 0;
+    text-align: center;
+  }
+  .analytics-bar-value {
+    display: block;
+    margin-bottom: 8px;
+    font-size: 11px;
+    color: var(--body-quiet-color);
+  }
+  .analytics-bar {
+    width: 100%;
+    min-height: 16px;
+    border-radius: 6px 6px 2px 2px;
+    background: linear-gradient(180deg, #4f8cff 0%, #2b5fd9 100%);
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.18);
+  }
+  .analytics-bar--clicks {
+    background: linear-gradient(180deg, #12b981 0%, #0f8a63 100%);
+  }
+  .analytics-bar-label {
+    display: block;
+    margin-top: 8px;
+    font-size: 11px;
+    color: var(--body-quiet-color);
+    white-space: nowrap;
+  }
+  .analytics-model-list ul,
+  .analytics-recent-actions ul {
+    margin: 0;
+    padding-left: 18px;
+  }
+  .analytics-model-list li + li,
+  .analytics-recent-actions li + li {
+    margin-top: 8px;
+  }
+  .analytics-app {
+    margin-bottom: 16px;
+  }
+  .analytics-app:last-child {
+    margin-bottom: 0;
+  }
+  .analytics-app h3 {
+    margin: 0 0 10px;
+    font-size: 15px;
+  }
+  .analytics-app a {
+    font-weight: 600;
+  }
+  .analytics-meta-links {
+    margin-left: 8px;
+    font-size: 12px;
+  }
+  .analytics-meta-links a {
+    font-weight: 400;
+  }
+  @media (max-width: 900px) {
+    .analytics-bottom {
+      grid-template-columns: 1fr;
+    }
+    .analytics-canvas-wrap,
+    .analytics-canvas-wrap--wide {
+      height: 280px;
+    }
+  }
+</style>
+{% endblock %}
+
+{% block content %}
+<div id="content-main">
+  <div class="analytics-actions">
+    <a href="/admin/portfolio_app/pagevisit/">View page visits</a>
+    |
+    <a href="/admin/portfolio_app/clickevent/">View click events</a>
+  </div>
+
+  <div class="analytics-grid">
+    <section class="analytics-card">
+      <h2>All-Time Visits</h2>
+      <div class="analytics-value">{{ total_visits }}</div>
+    </section>
+    <section class="analytics-card">
+      <h2>All-Time Clicks</h2>
+      <div class="analytics-value">{{ total_clicks }}</div>
+    </section>
+    <section class="analytics-card">
+      <h2>Recent Visitors</h2>
+      <div class="analytics-value">{{ unique_visitors }}</div>
+    </section>
+    <section class="analytics-card">
+      <h2>Raw Retention</h2>
+      <div class="analytics-value">{{ raw_retention_days }}d</div>
+    </section>
+  </div>
+
+  <div class="analytics-layout">
+    <div class="analytics-interactive-grid">
+      <section class="analytics-panel analytics-panel--wide">
+        <h2>Interactive Trends</h2>
+        <div class="analytics-canvas-wrap analytics-canvas-wrap--wide">
+          <canvas id="analytics-trends-chart" aria-label="Interactive trends chart"></canvas>
+        </div>
+      </section>
+
+      <section class="analytics-panel">
+        <h2>Whole Week Activity</h2>
+        <div class="analytics-canvas-wrap">
+          <canvas id="analytics-weekly-chart" aria-label="Whole week activity chart"></canvas>
+        </div>
+      </section>
+
+      <section class="analytics-panel">
+        <h2>Traffic Share</h2>
+        <div class="analytics-canvas-wrap">
+          <canvas id="analytics-pie-chart" aria-label="Traffic share pie chart"></canvas>
+        </div>
+      </section>
+    </div>
+
+    <div class="analytics-chart-grid">
+      <section class="analytics-panel">
+        <h2>Visits Chart</h2>
+        {% if visit_chart_points %}
+        <div class="analytics-chart" aria-label="Visits chart">
+          {% for point in visit_chart_points %}
+          <div class="analytics-bar-wrap" title="{{ point.label }}: {{ point.total }} visits">
+            <span class="analytics-bar-value">{{ point.total }}</span>
+            <div class="analytics-bar" style="height: {{ point.height_pct }}%;"></div>
+            <span class="analytics-bar-label">{{ point.label }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p>No visit data to chart yet.</p>
+        {% endif %}
+      </section>
+
+      <section class="analytics-panel">
+        <h2>Clicks Chart</h2>
+        {% if click_chart_points %}
+        <div class="analytics-chart" aria-label="Clicks chart">
+          {% for point in click_chart_points %}
+          <div class="analytics-bar-wrap" title="{{ point.label }}: {{ point.total }} clicks">
+            <span class="analytics-bar-value">{{ point.total }}</span>
+            <div class="analytics-bar analytics-bar--clicks" style="height: {{ point.height_pct }}%;"></div>
+            <span class="analytics-bar-label">{{ point.label }}</span>
+          </div>
+          {% endfor %}
+        </div>
+        {% else %}
+        <p>No click data to chart yet.</p>
+        {% endif %}
+      </section>
+    </div>
+
+    <section class="analytics-panel">
+      <h2>Visits by Day</h2>
+      <ul class="analytics-list">
+        {% for row in visit_series %}
+        <li><strong>{{ row.day }}</strong> <span class="analytics-muted">- {{ row.total }} visits</span></li>
+        {% empty %}
+        <li>No visits recorded yet.</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section class="analytics-panel">
+      <h2>Clicks by Day</h2>
+      <ul class="analytics-list">
+        {% for row in click_series %}
+        <li><strong>{{ row.day }}</strong> <span class="analytics-muted">- {{ row.total }} clicks</span></li>
+        {% empty %}
+        <li>No clicks recorded yet.</li>
+        {% endfor %}
+      </ul>
+    </section>
+
+    <section class="analytics-panel">
+      <h2>Top Pages</h2>
+      <table class="analytics-table">
+        <thead>
+          <tr>
+            <th>Path</th>
+            <th>Visits</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in top_pages %}
+          <tr>
+            <td>{{ row.path }}</td>
+            <td>{{ row.total }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2">No visits recorded yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="analytics-panel">
+      <h2>Top Click Targets</h2>
+      <table class="analytics-table">
+        <thead>
+          <tr>
+            <th>Element</th>
+            <th>Clicks</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in top_click_targets %}
+          <tr>
+            <td>
+              <strong>{{ row.element }}</strong>
+              <div class="analytics-muted">{{ row.page }}</div>
+              {% if row.target_url %}
+              <div class="analytics-muted">{{ row.target_url }}</div>
+              {% endif %}
+            </td>
+            <td>{{ row.total }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2">No clicks recorded yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="analytics-panel">
+      <h2>Most Active Visitors</h2>
+      <table class="analytics-table">
+        <thead>
+          <tr>
+            <th>Visitor</th>
+            <th>Activity</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for row in visitor_rows %}
+          <tr>
+            <td>
+              <strong>{{ row.visitor_label|default:"Anonymous" }}</strong>
+              <div class="analytics-muted">{{ row.session_key|default:"No session key" }}</div>
+            </td>
+            <td>{{ row.visits }} visits / {{ row.click_count }} clicks</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2">No visitor data recorded yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="analytics-panel">
+      <h2>Recent Clicks</h2>
+      <p class="analytics-muted">Raw events kept for {{ raw_retention_days }} days.</p>
+      <table class="analytics-table">
+        <thead>
+          <tr>
+            <th>Event</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for click in recent_clicks %}
+          <tr>
+            <td>
+              <strong>{{ click.element }}</strong>
+              {% if click.text %}
+              <div class="analytics-muted">{{ click.text }}</div>
+              {% endif %}
+              <div class="analytics-muted">{{ click.page }}{% if click.ip_hash %} - {{ click.ip_hash|slice:":12" }}{% endif %}</div>
+            </td>
+            <td>{{ click.clicked_at }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2">No clicks recorded yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+
+    <section class="analytics-panel">
+      <h2>Recent Visits</h2>
+      <p class="analytics-muted">Raw events kept for {{ raw_retention_days }} days.</p>
+      <table class="analytics-table">
+        <thead>
+          <tr>
+            <th>Visit</th>
+            <th>Time</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for visit in recent_visits %}
+          <tr>
+            <td>
+              <strong>{{ visit.path }}</strong>
+              <div class="analytics-muted">{{ visit.method }}{% if visit.ip_hash %} - {{ visit.ip_hash|slice:":12" }}{% endif %}</div>
+            </td>
+            <td>{{ visit.visited_at }}</td>
+          </tr>
+          {% empty %}
+          <tr>
+            <td colspan="2">No visits recorded yet.</td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+    </section>
+  </div>
+
+  <div class="analytics-bottom">
+    <section class="analytics-panel analytics-model-list">
+      <h2>Manage Content</h2>
+      {% if app_list %}
+        {% for app in app_list %}
+        <div class="analytics-app">
+          <h3>{{ app.name }}</h3>
+          <ul>
+            {% for model in app.models %}
+            <li>
+              {% if model.admin_url %}
+              <a href="{{ model.admin_url }}">{{ model.name }}</a>
+              {% else %}
+              {{ model.name }}
+              {% endif %}
+              <span class="analytics-meta-links">
+                {% if model.add_url %}
+                <a href="{{ model.add_url }}">{% translate "Add" %}</a>
+                {% endif %}
+                {% if model.admin_url and model.add_url %}
+                |
+                {% endif %}
+                {% if model.admin_url %}
+                <a href="{{ model.admin_url }}">{% translate "Change" %}</a>
+                {% endif %}
+              </span>
+            </li>
+            {% endfor %}
+          </ul>
+        </div>
+        {% endfor %}
+      {% else %}
+      <p>No applications available.</p>
+      {% endif %}
+    </section>
+
+    <section class="analytics-panel analytics-recent-actions">
+      <h2>Recent Actions</h2>
+      {% get_admin_log 10 as admin_log for_user user %}
+      {% if admin_log %}
+      <ul>
+        {% for entry in admin_log %}
+        <li>
+          {% if entry.is_addition %}
+          {% translate "Added" %}
+          {% elif entry.is_change %}
+          {% translate "Changed" %}
+          {% elif entry.is_deletion %}
+          {% translate "Deleted" %}
+          {% endif %}
+
+          {% if entry.get_admin_url %}
+          <a href="{{ entry.get_admin_url }}">{{ entry.object_repr }}</a>
+          {% else %}
+          {{ entry.object_repr }}
+          {% endif %}
+
+          {% if entry.content_type %}
+          <div class="analytics-muted">{{ entry.content_type.name|capfirst }}</div>
+          {% endif %}
+        </li>
+        {% endfor %}
+      </ul>
+      {% else %}
+      <p>No recent actions yet.</p>
+      {% endif %}
+    </section>
+  </div>
+</div>
+
+{{ combined_daily_dataset|json_script:"combined-daily-dataset" }}
+{{ visit_daily_dataset|json_script:"visit-daily-dataset" }}
+{{ click_daily_dataset|json_script:"click-daily-dataset" }}
+{{ visit_weekday_dataset|json_script:"visit-weekday-dataset" }}
+{{ click_weekday_dataset|json_script:"click-weekday-dataset" }}
+{{ traffic_share_dataset|json_script:"traffic-share-dataset" }}
+
+<script>
+  (function () {
+    if (typeof Chart === "undefined") {
+      return;
+    }
+
+    function readDataset(id) {
+      const node = document.getElementById(id);
+      if (!node) return null;
+      return JSON.parse(node.textContent);
+    }
+
+    const combinedDaily = readDataset("combined-daily-dataset");
+    const visitWeekday = readDataset("visit-weekday-dataset");
+    const clickWeekday = readDataset("click-weekday-dataset");
+    const trafficShare = readDataset("traffic-share-dataset");
+
+    const axisColor = getComputedStyle(document.documentElement)
+      .getPropertyValue("--body-quiet-color")
+      .trim() || "#6b7280";
+    const gridColor = "rgba(148, 163, 184, 0.18)";
+
+    const trendsCanvas = document.getElementById("analytics-trends-chart");
+    if (trendsCanvas && combinedDaily) {
+      new Chart(trendsCanvas, {
+        type: "line",
+        data: {
+          labels: combinedDaily.labels,
+          datasets: [
+            {
+              label: "Visits",
+              data: combinedDaily.visit_values,
+              borderColor: "#2b5fd9",
+              backgroundColor: "rgba(43, 95, 217, 0.14)",
+              fill: true,
+              tension: 0.35,
+              pointRadius: 3,
+              pointHoverRadius: 5,
+            },
+            {
+              label: "Clicks",
+              data: combinedDaily.click_values,
+              borderColor: "#0f8a63",
+              backgroundColor: "rgba(15, 138, 99, 0.12)",
+              fill: true,
+              tension: 0.35,
+              pointRadius: 3,
+              pointHoverRadius: 5,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: "index",
+            intersect: false,
+          },
+          plugins: {
+            legend: {
+              position: "top",
+            },
+          },
+          scales: {
+            x: {
+              ticks: { color: axisColor },
+              grid: { color: gridColor },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: axisColor, precision: 0 },
+              grid: { color: gridColor },
+            },
+          },
+        },
+      });
+    }
+
+    const weeklyCanvas = document.getElementById("analytics-weekly-chart");
+    if (weeklyCanvas && visitWeekday && clickWeekday) {
+      new Chart(weeklyCanvas, {
+        type: "bar",
+        data: {
+          labels: visitWeekday.labels,
+          datasets: [
+            {
+              label: "Visits",
+              data: visitWeekday.values,
+              backgroundColor: "rgba(43, 95, 217, 0.85)",
+              borderRadius: 6,
+            },
+            {
+              label: "Clicks",
+              data: clickWeekday.values,
+              backgroundColor: "rgba(15, 138, 99, 0.85)",
+              borderRadius: 6,
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          interaction: {
+            mode: "index",
+            intersect: false,
+          },
+          plugins: {
+            legend: {
+              position: "top",
+            },
+          },
+          scales: {
+            x: {
+              ticks: { color: axisColor },
+              grid: { display: false },
+            },
+            y: {
+              beginAtZero: true,
+              ticks: { color: axisColor, precision: 0 },
+              grid: { color: gridColor },
+            },
+          },
+        },
+      });
+    }
+
+    const pieCanvas = document.getElementById("analytics-pie-chart");
+    if (pieCanvas && trafficShare && trafficShare.labels.length) {
+      new Chart(pieCanvas, {
+        type: "pie",
+        data: {
+          labels: trafficShare.labels,
+          datasets: [
+            {
+              data: trafficShare.values,
+              backgroundColor: [
+                "#2b5fd9",
+                "#0f8a63",
+                "#f59e0b",
+                "#ef4444",
+                "#8b5cf6",
+              ],
+              borderWidth: 1,
+              borderColor: "rgba(255, 255, 255, 0.15)",
+            },
+          ],
+        },
+        options: {
+          responsive: true,
+          maintainAspectRatio: false,
+          plugins: {
+            legend: {
+              position: "bottom",
+            },
+          },
+        },
+      });
+    }
+  })();
+</script>
+{% endblock %}

@@ -26,4 +26,5 @@ urlpatterns = [
     path('git_update', git_update, name="git_update"),
     path("download-cv/", download_cv_pdf, name="download_cv"),
     path("github-contributions/", github_contributions, name="github_contributions"),
+    path("track-click/", track_click, name="track_click"),
 ]
