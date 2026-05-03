@@ -58,3 +58,69 @@ class Languages(models.Model):
 
     def __str__(self):
         return self.language_name
+    
+class PageVisit(models.Model):
+    path = models.CharField(max_length=255)
+    method = models.CharField(max_length=10, blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    ip_hash = models.CharField(max_length=64, blank=True, db_index=True)
+    user_agent = models.CharField(max_length=255, blank=True)
+    referrer = models.CharField(max_length=255, blank=True)
+    session_key = models.CharField(max_length=100, blank=True)
+    visited_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    def __str__(self):
+        return f"{self.path} - {self.visited_at}"
+
+
+class ClickEvent(models.Model):
+    element = models.CharField(max_length=255)
+    element_id = models.CharField(max_length=255, blank=True)
+    element_class = models.CharField(max_length=255, blank=True)
+    text = models.CharField(max_length=255, blank=True)
+    page = models.CharField(max_length=255)
+    target_url = models.TextField(blank=True)
+    ip_address = models.GenericIPAddressField(null=True, blank=True)
+    ip_hash = models.CharField(max_length=64, blank=True, db_index=True)
+    user_agent = models.CharField(max_length=255, blank=True)
+    referrer = models.CharField(max_length=255, blank=True)
+    session_key = models.CharField(max_length=100, blank=True)
+    clicked_at = models.DateTimeField(auto_now_add=True, db_index=True)
+
+    def __str__(self):
+        return f"{self.element} on {self.page} - {self.clicked_at}"
+
+
+class DailyPageVisit(models.Model):
+    date = models.DateField(db_index=True)
+    path = models.CharField(max_length=255)
+    visit_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(fields=("date", "path"), name="unique_daily_page_visit")
+        ]
+        ordering = ("-date", "path")
+
+    def __str__(self):
+        return f"{self.date} {self.path} ({self.visit_count})"
+
+
+class DailyClickAggregate(models.Model):
+    date = models.DateField(db_index=True)
+    page = models.CharField(max_length=255)
+    element = models.CharField(max_length=255)
+    target_url = models.CharField(max_length=500, blank=True)
+    click_count = models.PositiveIntegerField(default=0)
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=("date", "page", "element", "target_url"),
+                name="unique_daily_click_aggregate",
+            )
+        ]
+        ordering = ("-date", "page", "element")
+
+    def __str__(self):
+        return f"{self.date} {self.page} {self.element} ({self.click_count})"
